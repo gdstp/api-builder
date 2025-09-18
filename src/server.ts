@@ -1,7 +1,7 @@
-import { placeholder } from "./placeholder";
+import { sum } from "./sum";
 
 export const main = () => {
-  const result = placeholder();
+  const result = sum(1, 2);
 
   const response = `Hello, world! ${result}`;
 
