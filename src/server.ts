@@ -1,13 +1,16 @@
-import { sum } from "./sum";
+import dotenv from "dotenv";
+import express from "express";
+import { requireEnv } from "./utils";
 
-export const main = () => {
-  const result = sum(1, 2);
+dotenv.config();
 
-  const response = `Hello, world! ${result}`;
+const app = express();
+const PORT = requireEnv("API_PORT");
 
-  console.log(response);
+app.get("/", (req, res) => {
+  res.send("Hello, world!");
+});
 
-  return response;
-};
-
-main();
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
