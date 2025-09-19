@@ -19,10 +19,26 @@ describe("EncrypterService", () => {
 
       expect(hashedPassword).not.toBe(password);
       expect(hashedPassword.length).toBe(60);
+    });
+  });
 
-      await expect(encrypter.compare(password, hashedPassword)).resolves.toBe(
-        true,
-      );
+  describe("compare", () => {
+    it("should compare password successfully", async () => {
+      const password = "mySecretPassword123";
+      const hashedPassword = await encrypter.hash(password);
+
+      const result = encrypter.compare(password, hashedPassword);
+
+      await expect(result).resolves.toBe(true);
+    });
+
+    it("should return false if password is incorrect", async () => {
+      const password = "mySecretPassword123";
+      const hashedPassword = await encrypter.hash(password);
+
+      const result = encrypter.compare("wrongPassword", hashedPassword);
+
+      await expect(result).resolves.toBe(false);
     });
   });
 });
