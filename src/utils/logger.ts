@@ -9,10 +9,23 @@ const logFormatter = winston.format.printf(function ({
   message,
   ...meta
 }) {
-  const metaStr = Object.keys(meta).length
-    ? `\n${JSON.stringify(meta, null, 2)}`
-    : "";
-  return `[${level}][ ${timestamp} ]: ${message} ${metaStr}`;
+  if (
+    meta.error &&
+    meta.error instanceof Error &&
+    typeof meta.error.message === "string"
+  ) {
+    try {
+      const parsed = JSON.parse(meta.error.message);
+      meta.error.message = parsed;
+    } catch {}
+  }
+
+  let formattedMeta = "";
+  if (Object.keys(meta).length > 0) {
+    formattedMeta = "\n" + JSON.stringify(meta, null, 2);
+  }
+
+  return `[${level}][ ${timestamp} ]: ${message} ${formattedMeta}`;
 });
 
 const fileFormat = winston.format.combine(
