@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { requireEnv, logger } from "./utils";
 import middlewares from "./middlewares";
-import v1Router from "./routes/v1";
+import apiRouter from "./routes";
 
 dotenv.config();
 
@@ -11,7 +11,7 @@ const PORT = requireEnv("API_PORT");
 
 app.use(express.json());
 
-app.use("/v1", v1Router);
+app.use("/api", apiRouter);
 
 app.use(middlewares.withErrorHandler);
 

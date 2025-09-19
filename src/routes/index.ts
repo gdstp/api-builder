@@ -3,6 +3,12 @@ import { Router } from "express";
 
 const router = Router();
 
-router.use("/user", userRouter);
+/**
+ *
+ * API V1 Routes
+ *
+ */
+
+router.use("/v1/user", userRouter);
 
 export default router;

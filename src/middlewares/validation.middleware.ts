@@ -5,9 +5,9 @@ import { AppError } from "@/utils/AppError";
 import { RequestHandler } from "express";
 import z from "zod";
 
-type Infer<T extends z.ZodType> = T extends z.ZodType ? z.infer<T> : unknown;
-
 type ZodType = z.ZodType;
+
+type Infer<T extends ZodType> = T extends ZodType ? z.infer<T> : unknown;
 
 export default function withInputValidation<P extends ZodType>({
   schema,
