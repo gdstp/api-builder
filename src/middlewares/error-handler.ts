@@ -3,28 +3,43 @@ import logger from "@/utils/logger";
 import { NextFunction, Request, Response } from "express";
 
 export default function withErrorHandler(
-  err: unknown,
-  _req: Request,
+  err: Error | AppError,
+  req: Request,
   res: Response,
   _next: NextFunction,
 ) {
-  if (err instanceof AppError) {
-    return res
-      .status(err.statusCode)
-      .json({ error: err.message, details: err.fields ?? null });
-  }
-
-  if ((err as { type: string })?.type === "entity.parse.failed") {
-    return res.status(400).json({ error: "Invalid JSON body" });
-  }
-
-  logger.error("UnhandledError", {
-    err: {
-      name: (err as { name: string })?.name,
-      message: (err as { message: string })?.message,
-      stack: (err as { stack: string })?.stack,
-    },
+  logger.error("Application error occurred", {
+    message: err.message,
+    stack: err.stack,
+    endpoint: req.path,
+    method: req.method,
+    ip: req.ip,
+    userAgent: req.get("User-Agent"),
+    timestamp: new Date().toISOString(),
   });
 
-  res.status(500).json({ error: "Internal Server Error" });
+  if (err instanceof AppError) {
+    res.status(err.statusCode).json({
+      success: false,
+      error: {
+        message: err.message,
+        code: err.code,
+        ...(err.fields && { fields: err.fields }),
+      },
+    });
+    return;
+  }
+
+  if (err.message.includes("Unique constraint failed")) {
+    res.status(409).json({
+      success: false,
+      error: {
+        code: "DUPLICATE_ENTRY",
+        message: "A record with this information already exists",
+      },
+    });
+    return;
+  }
+
+  res.status(500).json({ success: false, error: "Internal Server Error" });
 }

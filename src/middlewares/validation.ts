@@ -5,50 +5,57 @@ import { AppError } from "@/utils/AppError";
 import { RequestHandler } from "express";
 import z from "zod";
 
-type Infer<T extends z.ZodType | undefined> = T extends z.ZodType
-  ? z.infer<T>
-  : unknown;
+type Infer<T extends z.ZodType> = T extends z.ZodType ? z.infer<T> : unknown;
 
-type ZodType = z.ZodType | undefined;
+type ZodType = z.ZodType;
 
-export default function withInputValidation<
-  P extends ZodType,
-  Q extends ZodType,
-  B extends ZodType,
->({
-  body,
-  query,
-  params,
+export default function withInputValidation<P extends ZodType>({
+  schema,
+  field,
 }: {
-  body?: B;
-  query?: Q;
-  params?: P;
-}): RequestHandler<Infer<P>, any, Infer<B>, Infer<Q>> {
+  schema: P;
+  field: "body" | "query" | "params";
+}): RequestHandler<Infer<P>, any, Infer<P>, Infer<P>> {
   return (req, _res, next) => {
     try {
-      if (params) req.params = params.parse(req.params) as any;
-      if (query) req.query = query.parse(req.query) as any;
-      if (body) req.body = body.parse(req.body) as any;
+      schema.parse(req[field]);
+
       next();
     } catch (error) {
-      logger.error("Error parsing input", { error });
       if (error instanceof z.ZodError) {
+        const formattedErrors = error.issues.reduce(
+          (acc, issue) => {
+            acc[issue.path.join(".")] = issue.message;
+            return acc;
+          },
+          {} as Record<string, string>,
+        );
+
+        logger.warn("Validation failed", {
+          endpoint: req.path,
+          method: req.method,
+          errors: formattedErrors,
+          userAgent: req.get("User-Agent"),
+          ip: req.ip,
+        });
+
         next(
           new AppError(
             "Invalid request input",
             400,
             "INVALID_REQUEST",
-            error.issues.reduce(
-              (acc, issue) => {
-                acc[issue.path.join(".")] = issue.message;
-                return acc;
-              },
-              {} as Record<string, string>,
-            ),
+            formattedErrors,
           ),
         );
       }
+
+      logger.error("Unexpected validation error", {
+        error: error instanceof Error ? error.message : String(error),
+        endpoint: req.path,
+        method: req.method,
+      });
+
+      next(new AppError("Invalid request data", 400, "INVALID_REQUEST"));
     }
-    next(new AppError("Invalid request input", 400, "INVALID_REQUEST"));
   };
 }
