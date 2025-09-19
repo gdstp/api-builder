@@ -49,5 +49,13 @@ describe("EncrypterService", () => {
 
       await expect(result).resolves.toBe(false);
     });
+
+    it("should throw an AppError if password is empty", async () => {
+      const password = "";
+
+      await expect(encrypter.compare(password, "")).rejects.toEqual(
+        new AppError("Password is required", 400, "PASSWORD_REQUIRED"),
+      );
+    });
   });
 });

@@ -15,6 +15,10 @@ export default class Encrypter {
   }
 
   async compare(password: string, hash: string) {
+    if (!password) {
+      throw new AppError("Password is required", 400, "PASSWORD_REQUIRED");
+    }
+
     return await bcrypt.compare(password, hash);
   }
 }
