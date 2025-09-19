@@ -53,8 +53,16 @@ describe("EncrypterService", () => {
     it("should throw an AppError if password is empty", async () => {
       const password = "";
 
-      await expect(encrypter.compare(password, "")).rejects.toEqual(
+      await expect(encrypter.compare(password, "myHash")).rejects.toEqual(
         new AppError("Password is required", 400, "PASSWORD_REQUIRED"),
+      );
+    });
+
+    it("should throw an AppError if hash is empty", async () => {
+      const password = "mySecretPassword123";
+
+      await expect(encrypter.compare(password, "")).rejects.toEqual(
+        new AppError("Hash is required", 400, "HASH_REQUIRED"),
       );
     });
   });

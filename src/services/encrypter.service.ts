@@ -19,6 +19,10 @@ export default class Encrypter {
       throw new AppError("Password is required", 400, "PASSWORD_REQUIRED");
     }
 
+    if (!hash) {
+      throw new AppError("Hash is required", 400, "HASH_REQUIRED");
+    }
+
     return await bcrypt.compare(password, hash);
   }
 }
