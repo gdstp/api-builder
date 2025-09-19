@@ -24,6 +24,7 @@ export default [
       semi: ["error", "always"],
       quotes: ["error", "double"],
       "prettier/prettier": "error",
+      "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": [
         "error",
         {

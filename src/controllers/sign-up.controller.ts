@@ -1,6 +1,6 @@
 import UserRepository from "@/repositories/user.repository";
 import { SignUpInput } from "@/schemas/sign-up.schema";
-import Encrypter from "@/services/Encrypter.service";
+import Encrypter from "@/services/encrypter.service";
 import { AppError } from "@/utils/AppError";
 
 export default async function SignUpController(input: SignUpInput) {
