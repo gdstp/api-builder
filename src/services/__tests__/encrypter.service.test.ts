@@ -29,6 +29,14 @@ describe("EncrypterService", () => {
         new AppError("Password is required", 400, "PASSWORD_REQUIRED"),
       );
     });
+
+    it("should return different hashes for same passwords", async () => {
+      const password = "mySecretPassword123";
+      const hashedPassword1 = await encrypter.hash(password);
+      const hashedPassword2 = await encrypter.hash(password);
+
+      expect(hashedPassword1).not.toBe(hashedPassword2);
+    });
   });
 
   describe("compare", () => {
