@@ -1,10 +1,14 @@
 import { requireEnv } from "@/utils";
+import { AppError } from "@/utils/AppError";
 import bcrypt from "bcryptjs";
 
 const SALT_ROUNDS = parseInt(requireEnv("SALT_ROUNDS"), 10);
 
 export default class Encrypter {
   async hash(password: string) {
+    if (!password) {
+      throw new AppError("Password is required", 400, "PASSWORD_REQUIRED");
+    }
     const salt = bcrypt.genSaltSync(SALT_ROUNDS);
 
     return await bcrypt.hash(password, salt);

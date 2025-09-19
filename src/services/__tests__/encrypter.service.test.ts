@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import Encrypter from "@/services/encrypter.service";
+import { AppError } from "@/utils/AppError";
 
 vi.mock("@/utils", () => ({
   requireEnv: vi.fn().mockReturnValue("10"),
@@ -19,6 +20,14 @@ describe("EncrypterService", () => {
 
       expect(hashedPassword).not.toBe(password);
       expect(hashedPassword.length).toBe(60);
+    });
+
+    it("should throw an AppError if password is empty", async () => {
+      const password = "";
+
+      await expect(encrypter.hash(password)).rejects.toEqual(
+        new AppError("Password is required", 400, "PASSWORD_REQUIRED"),
+      );
     });
   });
 
