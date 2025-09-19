@@ -2,7 +2,7 @@
 GET http://localhost:3000/users
 
 ### Create user
-POST http://localhost:8000/sign-up
+POST http://localhost:8000/v1/user/sign-up
 Content-Type: application/json
 
 {

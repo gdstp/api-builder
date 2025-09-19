@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { requireEnv, logger } from "./utils";
 import middlewares from "./middlewares";
-import { signUpSchema } from "./schemas/signUp.schema";
+import v1Router from "./routes/v1";
 
 dotenv.config();
 
@@ -11,18 +11,7 @@ const PORT = requireEnv("API_PORT");
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello, world!");
-});
-
-app.post(
-  "/sign-up",
-  middlewares.withInputValidation({ body: signUpSchema }),
-  (req, res) => {
-    // const input = req.body;
-    res.send("Hello, world!");
-  },
-);
+app.use("/v1", v1Router);
 
 app.use(middlewares.withErrorHandler);
 
