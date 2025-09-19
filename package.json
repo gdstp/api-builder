@@ -5,7 +5,9 @@
   "scripts": {
     "typecheck": "eslint src/**/*.ts",
     "dev": "tsx watch -r tsconfig-paths/register src/server.ts",
-    "test": "vitest",
+    "pretest": "docker-compose -f docker-compose-test.yml up -d --build && npx dotenv-cli -e  .env.test -- npx prisma migrate deploy",
+    "test": "npx dotenv-cli -e  .env.test -- vitest",
+    "posttest": "docker-compose -f docker-compose-test.yml down",
     "prepare": "husky"
   },
   "author": "",
@@ -26,6 +28,7 @@
     "@types/node": "^24.5.2",
     "@typescript-eslint/eslint-plugin": "^8.44.0",
     "@typescript-eslint/parser": "^8.44.0",
+    "dotenv-cli": "^10.0.0",
     "eslint": "^9.35.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
