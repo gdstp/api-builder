@@ -1,6 +1,6 @@
-import SignUpController from "@/controllers/SignUpController";
+import SignUpController from "@/controllers/sign-up.controller";
 import middlewares from "@/middlewares";
-import { signUpSchema } from "@/schemas/signUp.schema";
+import { signUpSchema } from "@/schemas/sign-up.schema";
 import { Router } from "express";
 
 const router = Router();

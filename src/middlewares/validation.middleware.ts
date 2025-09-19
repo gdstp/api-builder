@@ -31,7 +31,7 @@ export default function withInputValidation<P extends ZodType>({
           {} as Record<string, string>,
         );
 
-        logger.warn("Validation failed", {
+        logger.warning("Validation failed", {
           endpoint: req.path,
           method: req.method,
           errors: formattedErrors,

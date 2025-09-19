@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
-import { SignUpInput } from "@/schemas/signUp.schema";
+import { SignUpInput } from "@/schemas/sign-up.schema";
 
-class UserRepository {
-  async createUser(input: SignUpInput) {
+export default class UserRepository {
+  async createUser(input: Omit<SignUpInput, "confirmPassword">) {
     const newUser = await prisma.user.create({
       data: {
         name: input.name,
@@ -14,5 +14,3 @@ class UserRepository {
     return newUser;
   }
 }
-
-export default new UserRepository();
