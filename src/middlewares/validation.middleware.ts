@@ -45,6 +45,7 @@ export default function withInputValidation<P extends ZodType>({
             formattedErrors,
           ),
         );
+        return;
       }
 
       logger.error("Unexpected validation error", {
