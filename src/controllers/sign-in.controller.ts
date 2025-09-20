@@ -14,17 +14,16 @@ export default async function SignInController(input: SignInInput) {
     throw new AppError("User not found", 404, "USER_NOT_FOUND");
   }
 
-  const isPasswordValid = await encrypter.compare(
-    input.password,
-    user.password,
-  );
+  const { password, ...userInfo } = user;
+
+  const isPasswordValid = await encrypter.compare(input.password, password);
 
   if (!isPasswordValid) {
     throw new AppError("Invalid password", 401, "INVALID_PASSWORD");
   }
 
-  const token = await tokenService.generateAccessToken(user.id);
-  const refreshToken = await tokenService.generateRefreshToken(user.id);
+  const token = await tokenService.generateAccessToken(userInfo.id);
+  const refreshToken = await tokenService.generateRefreshToken(userInfo.id);
 
   if (!token || !refreshToken) {
     throw new AppError(
@@ -35,7 +34,7 @@ export default async function SignInController(input: SignInInput) {
   }
 
   return {
-    user,
+    user: userInfo,
     token,
     refreshToken,
   };
