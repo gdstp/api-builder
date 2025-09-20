@@ -8,10 +8,10 @@ vi.mock("@/utils", () => ({
 
 describe("EncrypterService", () => {
   let encrypter = new Encrypter();
+  const password = "mySecretPassword123";
 
   describe("hash", () => {
     it("should hash password successfully", async () => {
-      const password = "mySecretPassword123";
       const hashedPassword = await encrypter.hash(password);
 
       expect(hashedPassword).not.toBe(password);
@@ -27,7 +27,6 @@ describe("EncrypterService", () => {
     });
 
     it("should return different hashes for same passwords", async () => {
-      const password = "mySecretPassword123";
       const hashedPassword1 = await encrypter.hash(password);
       const hashedPassword2 = await encrypter.hash(password);
 
@@ -37,7 +36,6 @@ describe("EncrypterService", () => {
 
   describe("compare", () => {
     it("should compare password successfully", async () => {
-      const password = "mySecretPassword123";
       const hashedPassword = await encrypter.hash(password);
 
       const result = encrypter.compare(password, hashedPassword);
@@ -46,7 +44,6 @@ describe("EncrypterService", () => {
     });
 
     it("should return false if password is incorrect", async () => {
-      const password = "mySecretPassword123";
       const hashedPassword = await encrypter.hash(password);
 
       const result = encrypter.compare("wrongPassword", hashedPassword);
@@ -63,8 +60,6 @@ describe("EncrypterService", () => {
     });
 
     it("should throw an AppError if hash is empty", async () => {
-      const password = "mySecretPassword123";
-
       await expect(encrypter.compare(password, "")).rejects.toEqual(
         new AppError("Hash is required", 400, "HASH_REQUIRED"),
       );

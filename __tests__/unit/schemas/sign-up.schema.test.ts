@@ -1,14 +1,10 @@
 import { signUpSchema } from "@/schemas/sign-up.schema";
+import { SIGN_UP_INPUT } from "__tests__/helpers/test-data";
 import { describe, expect, it } from "vitest";
 import z from "zod";
 
 describe("SignUpSchema", () => {
-  const input = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    password: "123456789",
-    confirmPassword: "123456789",
-  };
+  const input = SIGN_UP_INPUT;
 
   it("returns true if the payload is valid", () => {
     const res = signUpSchema.safeParse(input);

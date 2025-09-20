@@ -2,6 +2,7 @@ import SignUpController from "@/controllers/sign-up.controller";
 import UserRepository from "@/repositories/user.repository";
 import Encrypter from "@/services/encrypter.service";
 import { emptyDatabase } from "__tests__/helpers/empty-database";
+import { SIGN_UP_INPUT } from "__tests__/helpers/test-data";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 beforeEach(() => {
@@ -13,23 +14,13 @@ afterEach(async () => {
 });
 
 describe("SignUpController", () => {
+  const input = SIGN_UP_INPUT;
+
   it("should create a user", async () => {
     const spyEncrypter = vi.spyOn(Encrypter.prototype, "hash");
     const spyUserRepository = vi.spyOn(UserRepository.prototype, "createUser");
 
-    const input = {
-      name: "John Doe",
-      email: "john.doe@example.com",
-      password: "123456789",
-      confirmPassword: "123456789",
-    };
-
-    const user = await SignUpController({
-      name: input.name,
-      email: input.email,
-      password: input.password,
-      confirmPassword: input.confirmPassword,
-    });
+    const user = await SignUpController(input);
 
     expect(user).toHaveProperty("id");
     expect(user.email).toBe(input.email);
@@ -54,13 +45,6 @@ describe("SignUpController", () => {
       .mockRejectedValue(new Error("Hash error"));
     const spyUserRepository = vi.spyOn(UserRepository.prototype, "createUser");
 
-    const input = {
-      name: "John Doe",
-      email: "john.doe@example.com",
-      password: "123456789",
-      confirmPassword: "123456789",
-    };
-
     await expect(SignUpController(input)).rejects.toThrow();
     expect(spyEncrypter).toHaveBeenCalledOnce();
     expect(spyUserRepository).not.toHaveBeenCalled();
@@ -71,13 +55,6 @@ describe("SignUpController", () => {
     const spyUserRepository = vi
       .spyOn(UserRepository.prototype, "createUser")
       .mockRejectedValue(new Error("User repository error"));
-
-    const input = {
-      name: "John Doe",
-      email: "john.doe@example.com",
-      password: "123456789",
-      confirmPassword: "123456789",
-    };
 
     await expect(SignUpController(input)).rejects.toThrow();
     expect(spyEncrypter).toHaveBeenCalledOnce();

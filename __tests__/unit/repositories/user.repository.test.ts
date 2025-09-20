@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { afterEach, beforeEach } from "node:test";
 import UserRepository from "@/repositories/user.repository";
 import { prisma } from "@/lib/prisma";
+import { SIGN_UP_INPUT } from "__tests__/helpers/test-data";
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
@@ -23,19 +24,14 @@ afterEach(() => {
 describe("UserRepository", () => {
   const userRepository = new UserRepository();
   const mockedPrisma = prisma as any;
+  const input = SIGN_UP_INPUT;
 
   it("should create a user", async () => {
-    const input = {
-      name: "John Doe",
-      email: "john.doe@example.com",
-      password: "123456789",
-    };
-
     const expectedOutput = {
       id: "1",
-      name: "John Doe",
-      email: "john.doe@example.com",
-      password: "123456789",
+      name: input.name,
+      email: input.email,
+      password: input.password,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -55,12 +51,6 @@ describe("UserRepository", () => {
   });
 
   it("should throw an error if the user already exists", async () => {
-    const input = {
-      name: "John Doe",
-      email: "john.doe@example.com",
-      password: "123456789",
-    };
-
     mockedPrisma.user.create
       .mockResolvedValueOnce({
         ...input,

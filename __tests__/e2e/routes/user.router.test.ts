@@ -3,6 +3,7 @@ import { app } from "@/server";
 import request from "supertest";
 import { emptyDatabase } from "__tests__/helpers/empty-database";
 import { logger } from "@/utils";
+import { SIGN_UP_INPUT } from "__tests__/helpers/test-data";
 
 beforeEach(async () => {
   await emptyDatabase();
@@ -11,21 +12,22 @@ beforeEach(async () => {
 
 describe("UserRouter", () => {
   const spyOnLoggerError = vi.spyOn(logger, "error");
+  const input = SIGN_UP_INPUT;
 
   it("should create a user", async () => {
     const response = await request(app).post("/api/v1/user/sign-up").send({
-      name: "John Doe",
-      email: "john.doe@example.com",
-      password: "123456789",
-      confirmPassword: "123456789",
+      name: input.name,
+      email: input.email,
+      password: input.password,
+      confirmPassword: input.confirmPassword,
     });
 
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty("data");
     expect(response.body.data).toMatchObject({
       id: expect.any(String),
-      name: "John Doe",
-      email: "john.doe@example.com",
+      name: input.name,
+      email: input.email,
     });
     expect(response.body.data).not.toHaveProperty("password");
     expect(response.body.success).toBe(true);
@@ -33,9 +35,9 @@ describe("UserRouter", () => {
 
   it("should return a 400 error if the request body is invalid", async () => {
     const response = await request(app).post("/api/v1/user/sign-up").send({
-      name: "John Doe",
-      email: "john.doe@example.com",
-      password: "123456789",
+      name: input.name,
+      email: input.email,
+      password: input.password,
     });
 
     expect(response.status).toBe(400);
@@ -52,10 +54,10 @@ describe("UserRouter", () => {
 
   it("should return 409 if the user already exists", async () => {
     const user = {
-      name: "John Doe",
-      email: "john.doe@example.com",
-      password: "123456789",
-      confirmPassword: "123456789",
+      name: input.name,
+      email: input.email,
+      password: input.password,
+      confirmPassword: input.confirmPassword,
     };
 
     await request(app).post("/api/v1/user/sign-up").send(user);
