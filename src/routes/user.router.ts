@@ -11,7 +11,7 @@ router.post(
   async (req, res) => {
     const data = await SignUpController(req.body);
 
-    res.status(200).json({ success: true, data });
+    res.status(201).json({ success: true, data });
   },
 );
 

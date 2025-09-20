@@ -1,15 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { app } from "@/server";
 import request from "supertest";
 import { emptyDatabase } from "__tests__/helpers/emptyDatabase";
 import { logger } from "@/utils";
 
-beforeEach(() => {
-  logger.level = "silent";
-});
-
-afterEach(async () => {
+beforeEach(async () => {
   await emptyDatabase();
+  logger.level = "silent";
 });
 
 describe("UserRouter", () => {
@@ -23,8 +20,14 @@ describe("UserRouter", () => {
       confirmPassword: "123456789",
     });
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveProperty("data");
+    expect(response.body.data).toMatchObject({
+      id: expect.any(String),
+      name: "John Doe",
+      email: "john.doe@example.com",
+    });
+    expect(response.body.data).not.toHaveProperty("password");
     expect(response.body.success).toBe(true);
   });
 
