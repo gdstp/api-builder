@@ -7,17 +7,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 async function emptyDatabase() {
   const tables = Prisma.dmmf.datamodel.models.map(
-    (model) => model.dbName || model.name,
+    (model) => `"${model.dbName || model.name}"`,
   );
 
-  return Promise.all(
-    tables.map((table) => prisma.$executeRawUnsafe(`DELETE FROM "${table}";`)),
-  );
+  const sql = `TRUNCATE ${tables.join(", ")} RESTART IDENTITY CASCADE;`;
+  await prisma.$executeRawUnsafe(sql);
 }
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.resetModules();
 });
 
 afterEach(async () => {
@@ -49,6 +47,8 @@ describe("SignUpController", () => {
     expect(user.createdAt).toBeInstanceOf(Date);
     expect(user.updatedAt).toBeInstanceOf(Date);
 
+    expect(user).not.toHaveProperty("password");
+
     expect(spyEncrypter).toHaveBeenCalledOnce();
     expect(spyUserRepository).toHaveBeenCalledOnce();
     expect(spyUserRepository).toHaveBeenCalledWith({
@@ -74,5 +74,28 @@ describe("SignUpController", () => {
     await expect(SignUpController(input)).rejects.toThrow();
     expect(spyEncrypter).toHaveBeenCalledOnce();
     expect(spyUserRepository).not.toHaveBeenCalled();
+  });
+
+  it("should throw if user repository throws", async () => {
+    const spyEncrypter = vi.spyOn(Encrypter.prototype, "hash");
+    const spyUserRepository = vi
+      .spyOn(UserRepository.prototype, "createUser")
+      .mockRejectedValue(new Error("User repository error"));
+
+    const input = {
+      name: "John Doe",
+      email: "john.doe@example.com",
+      password: "123456789",
+      confirmPassword: "123456789",
+    };
+
+    await expect(SignUpController(input)).rejects.toThrow();
+    expect(spyEncrypter).toHaveBeenCalledOnce();
+    expect(spyUserRepository).toHaveBeenCalledOnce();
+    expect(spyUserRepository).toHaveBeenCalledWith({
+      name: input.name,
+      email: input.email,
+      password: expect.not.stringMatching(input.password),
+    });
   });
 });
