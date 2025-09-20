@@ -35,4 +35,20 @@ describe("SignUpSchema", () => {
       expect(z.treeifyError(res.error)).toBeTruthy();
     }
   });
+
+  it("returns false if the passwords do not match", () => {
+    const res = signUpSchema.safeParse({
+      ...input,
+      confirmPassword: "different",
+    });
+    expect(res.success).toBe(false);
+    if (!res.success) {
+      expect(z.treeifyError(res.error)).toHaveProperty(
+        "properties.confirmPassword",
+      );
+      expect(
+        z.treeifyError(res.error).properties?.confirmPassword,
+      ).toBeDefined();
+    }
+  });
 });
