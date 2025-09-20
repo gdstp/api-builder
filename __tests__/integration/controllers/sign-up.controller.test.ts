@@ -1,12 +1,22 @@
 import SignUpController from "@/controllers/sign-up.controller";
 import UserRepository from "@/repositories/user.repository";
 import Encrypter from "@/services/encrypter.service";
-import { emptyDatabase } from "__tests__/helpers/empty-database";
 import { SIGN_UP_INPUT } from "__tests__/helpers/test-data";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    user: {
+      create: vi.fn(() => ({
+        ...SIGN_UP_INPUT,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })),
+    },
+  },
+}));
+
 beforeEach(async () => {
-  await emptyDatabase();
   vi.clearAllMocks();
 });
 
