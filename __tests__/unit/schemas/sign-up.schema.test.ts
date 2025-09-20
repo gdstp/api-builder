@@ -23,4 +23,16 @@ describe("SignUpSchema", () => {
       expect(z.treeifyError(res.error)).toBeTruthy();
     }
   });
+
+  it("returns false if the password is too short", () => {
+    const res = signUpSchema.safeParse({
+      ...input,
+      password: "123",
+      confirmPassword: "123",
+    });
+    expect(res.success).toBe(false);
+    if (!res.success) {
+      expect(z.treeifyError(res.error)).toBeTruthy();
+    }
+  });
 });
