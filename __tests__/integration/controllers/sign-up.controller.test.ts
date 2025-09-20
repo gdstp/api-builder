@@ -1,0 +1,60 @@
+import SignUpController from "@/controllers/sign-up.controller";
+import { prisma } from "@/lib/prisma";
+import UserRepository from "@/repositories/user.repository";
+import Encrypter from "@/services/encrypter.service";
+import { Prisma } from "@prisma/client";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+async function emptyDatabase() {
+  const tables = Prisma.dmmf.datamodel.models.map(
+    (model) => model.dbName || model.name,
+  );
+
+  return Promise.all(
+    tables.map((table) => prisma.$executeRawUnsafe(`DELETE FROM "${table}";`)),
+  );
+}
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  vi.resetModules();
+});
+
+afterEach(async () => {
+  await emptyDatabase();
+});
+
+describe("SignUpController", () => {
+  it("should create a user", async () => {
+    const spyEncrypter = vi.spyOn(Encrypter.prototype, "hash");
+    const spyUserRepository = vi.spyOn(UserRepository.prototype, "createUser");
+
+    const input = {
+      name: "John Doe",
+      email: "john.doe@example.com",
+      password: "123456789",
+      confirmPassword: "123456789",
+    };
+
+    const user = await SignUpController({
+      name: input.name,
+      email: input.email,
+      password: input.password,
+      confirmPassword: input.confirmPassword,
+    });
+
+    expect(user).toHaveProperty("id");
+    expect(user.email).toBe(input.email);
+    expect(user.name).toBe(input.name);
+    expect(user.createdAt).toBeInstanceOf(Date);
+    expect(user.updatedAt).toBeInstanceOf(Date);
+
+    expect(spyEncrypter).toHaveBeenCalledOnce();
+    expect(spyUserRepository).toHaveBeenCalledOnce();
+    expect(spyUserRepository).toHaveBeenCalledWith({
+      name: input.name,
+      email: input.email,
+      password: expect.not.stringMatching(input.password),
+    });
+  });
+});
