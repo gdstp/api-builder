@@ -62,4 +62,19 @@ describe("ErrorHandlerMiddleware", () => {
       },
     });
   });
+
+  it("should handle unknown errors", async () => {
+    const error = new Error("Unknown error");
+    app.get("/test", () => {
+      throw error;
+    });
+    app.use(withErrorHandler);
+
+    const result = await request(app).get("/test").send().expect(500);
+
+    expect(result.body).toEqual({
+      success: false,
+      error: "Internal Server Error",
+    });
+  });
 });
