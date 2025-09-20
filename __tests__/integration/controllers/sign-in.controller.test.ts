@@ -2,7 +2,10 @@ import SignInController from "@/controllers/sign-in.controller";
 import UserRepository from "@/repositories/user.repository";
 import Encrypter from "@/services/encrypter.service";
 import { AppError } from "@/utils/app-error";
-import { SIGN_IN_INPUT } from "__tests__/helpers/test-data";
+import {
+  SIGN_IN_INPUT,
+  USER_REPOSITORY_GET_USER_BY_EMAIL_RETURN,
+} from "__tests__/helpers/test-data";
 import { describe, expect, it, vi } from "vitest";
 
 describe("SignInController", () => {
@@ -12,13 +15,7 @@ describe("SignInController", () => {
       .mockResolvedValueOnce(true);
     const spyUserRepository = vi
       .spyOn(UserRepository.prototype, "getUserByEmail")
-      .mockResolvedValueOnce({
-        ...SIGN_IN_INPUT,
-        id: "1",
-        name: "John Doe",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
+      .mockResolvedValueOnce(USER_REPOSITORY_GET_USER_BY_EMAIL_RETURN);
     const user = await SignInController(SIGN_IN_INPUT);
 
     expect(user).toHaveProperty("id");
@@ -42,11 +39,33 @@ describe("SignInController", () => {
       .mockImplementationOnce(() => Promise.resolve(null));
     const spyEncrypter = vi.spyOn(Encrypter.prototype, "compare");
 
-    expect(SignInController(SIGN_IN_INPUT)).rejects.toEqual(
+    await expect(SignInController(SIGN_IN_INPUT)).rejects.toEqual(
       new AppError("User not found", 404, "USER_NOT_FOUND"),
     );
     expect(spyUserRepository).toHaveBeenCalledOnce();
     expect(spyUserRepository).toHaveBeenCalledWith(SIGN_IN_INPUT.email);
     expect(spyEncrypter).not.toHaveBeenCalled();
+  });
+
+  it("should throw AppError if encrypter returns false", async () => {
+    const spyUserRepository = vi
+      .spyOn(UserRepository.prototype, "getUserByEmail")
+      .mockImplementationOnce(() =>
+        Promise.resolve(USER_REPOSITORY_GET_USER_BY_EMAIL_RETURN),
+      );
+    const spyEncrypter = vi
+      .spyOn(Encrypter.prototype, "compare")
+      .mockResolvedValueOnce(false);
+
+    await expect(SignInController(SIGN_IN_INPUT)).rejects.toEqual(
+      new AppError("Invalid password", 401, "INVALID_PASSWORD"),
+    );
+    expect(spyUserRepository).toHaveBeenCalledOnce();
+    expect(spyUserRepository).toHaveBeenCalledWith(SIGN_IN_INPUT.email);
+    expect(spyEncrypter).toHaveBeenCalledOnce();
+    expect(spyEncrypter).toHaveBeenCalledWith(
+      SIGN_IN_INPUT.password,
+      USER_REPOSITORY_GET_USER_BY_EMAIL_RETURN.password,
+    );
   });
 });
