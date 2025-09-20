@@ -37,14 +37,14 @@ export default function withInputValidation<P extends ZodType>({
           ip: req.ip,
         });
 
-        next(
-          new AppError(
-            "Invalid request input",
-            400,
-            "INVALID_REQUEST",
-            formattedErrors,
-          ),
+        const appError = new AppError(
+          "Invalid request input",
+          400,
+          "INVALID_REQUEST",
+          formattedErrors,
         );
+
+        next(appError);
         return;
       }
 

@@ -7,13 +7,13 @@
     "dev": "tsx watch -r tsconfig-paths/register src/server.ts",
     "prepare": "husky",
     "test:unit": "npx dotenv-cli -e  .env.test -- vitest run --passWithNoTests __tests__/unit/**/*.test.ts",
-    "pretest:integration": "docker compose -f docker-compose-test.yml up -d --build --wait && npx dotenv -e .env.test -- prisma migrate deploy",
+    "pretest:integration": "docker compose -f docker-compose-test.yml up -d --build --wait && npx dotenv -e .env.test -- prisma db push --force-reset",
     "test:integration": "npx dotenv -e .env.test -- vitest run --passWithNoTests __tests__/integration/**/*.test.ts",
     "posttest:integration": "docker compose -f docker-compose-test.yml down -v",
-    "pretest:e2e": "docker compose -f docker-compose-test.yml up -d --build --wait && npx dotenv -e .env.test -- prisma migrate deploy",
+    "pretest:e2e": "docker compose -f docker-compose-test.yml up -d --build --wait && npx dotenv -e .env.test -- prisma db push --force-reset",
     "test:e2e": "npx dotenv -e .env.test -- vitest run --passWithNoTests __tests__/e2e/**/*.test.ts",
     "posttest:e2e": "docker compose -f docker-compose-test.yml down -v",
-    "test:all:coverage": "docker compose -f docker-compose-test.yml up -d --build --wait && npx dotenv -e .env.test -- prisma migrate deploy && npx dotenv -e .env.test -- vitest run --coverage --passWithNoTests __tests__/**/**/*.test.ts --coverage.reporter=text-summary --coverage.reporter=lcov && docker compose -f docker-compose-test.yml down -v"
+    "test:all:coverage": "docker compose -f docker-compose-test.yml up -d --build --wait && npx dotenv -e .env.test -- prisma db push --force-reset && npx dotenv -e .env.test -- vitest run --coverage --passWithNoTests __tests__/**/**/*.test.ts --coverage.reporter=text-summary --coverage.reporter=lcov && docker compose -f docker-compose-test.yml down -v"
   },
   "author": "",
   "license": "ISC",

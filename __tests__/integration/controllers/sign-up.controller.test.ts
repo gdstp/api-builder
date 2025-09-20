@@ -3,14 +3,11 @@ import UserRepository from "@/repositories/user.repository";
 import Encrypter from "@/services/encrypter.service";
 import { emptyDatabase } from "__tests__/helpers/empty-database";
 import { SIGN_UP_INPUT } from "__tests__/helpers/test-data";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-beforeEach(() => {
-  vi.clearAllMocks();
-});
-
-afterEach(async () => {
+beforeEach(async () => {
   await emptyDatabase();
+  vi.clearAllMocks();
 });
 
 describe("SignUpController", () => {
