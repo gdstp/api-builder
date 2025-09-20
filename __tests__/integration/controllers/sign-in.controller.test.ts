@@ -17,7 +17,10 @@ describe("SignInController", () => {
     const spyUserRepository = vi
       .spyOn(UserRepository.prototype, "getUserByEmail")
       .mockResolvedValueOnce(USER_REPOSITORY_GET_USER_BY_EMAIL_RETURN);
-    const spyTokenService = vi.spyOn(TokenService.prototype, "generateToken");
+    const spyTokenService = vi.spyOn(
+      TokenService.prototype,
+      "generateAccessToken",
+    );
     const data = await SignInController(SIGN_IN_INPUT);
 
     expect(data.user).toHaveProperty("id");
@@ -86,7 +89,7 @@ describe("SignInController", () => {
     vi.spyOn(Encrypter.prototype, "compare").mockResolvedValueOnce(true);
 
     const spyTokenService = vi
-      .spyOn(TokenService.prototype, "generateToken")
+      .spyOn(TokenService.prototype, "generateAccessToken")
       .mockResolvedValueOnce("");
 
     await expect(SignInController(SIGN_IN_INPUT)).rejects.toEqual(

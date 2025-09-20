@@ -23,7 +23,7 @@ export default async function SignInController(input: SignInInput) {
     throw new AppError("Invalid password", 401, "INVALID_PASSWORD");
   }
 
-  const token = await tokenService.generateToken(user.id);
+  const token = await tokenService.generateAccessToken(user.id);
 
   if (!token) {
     throw new AppError(
