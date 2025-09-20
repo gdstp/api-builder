@@ -51,4 +51,16 @@ describe("SignUpSchema", () => {
       ).toBeDefined();
     }
   });
+
+  it("returns false if there are extra keys", () => {
+    const res = signUpSchema.safeParse({ ...input, extra: "field" } as any);
+    expect(res.success).toBe(false);
+    if (!res.success) {
+      expect(
+        res.error.issues.some(
+          (i) => i.code === "unrecognized_keys" && i.keys?.includes("extra"),
+        ),
+      ).toBe(true);
+    }
+  });
 });
