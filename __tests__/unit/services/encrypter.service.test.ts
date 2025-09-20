@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import Encrypter from "@/services/encrypter.service";
 import { AppError } from "@/utils/AppError";
 
@@ -7,11 +7,7 @@ vi.mock("@/utils", () => ({
 }));
 
 describe("EncrypterService", () => {
-  let encrypter: Encrypter;
-
-  beforeEach(() => {
-    encrypter = new Encrypter();
-  });
+  let encrypter = new Encrypter();
 
   describe("hash", () => {
     it("should hash password successfully", async () => {
