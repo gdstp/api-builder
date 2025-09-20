@@ -11,3 +11,12 @@ Content-Type: application/json
   "password": "123456789",
   "confirmPassword": "123456789"
 }
+
+### Sign in user
+POST http://localhost:8000/api/v1/user/sign-in
+Content-Type: application/json
+
+{
+  "email": "gabriel@example.com",
+  "password": "123456789"
+}

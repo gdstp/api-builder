@@ -16,7 +16,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    command: npm run dev
+    command: npx prisma migrate dev && npm run dev
     ports:
       - 8000:8000
     environment:
