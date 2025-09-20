@@ -8,6 +8,7 @@ vi.mock("@/lib/prisma", () => ({
   prisma: {
     user: {
       create: vi.fn(),
+      findUnique: vi.fn(),
     },
   },
 }));
@@ -72,5 +73,21 @@ describe("UserRepository", () => {
     );
 
     expect(mockedPrisma.user.create).toHaveBeenCalledTimes(2);
+  });
+
+  it("should get a user by email", async () => {
+    const expectedOutput = {
+      id: "1",
+      name: input.name,
+      email: input.email,
+      password: input.password,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    mockedPrisma.user.findUnique.mockResolvedValue(expectedOutput);
+
+    const user = await userRepository.getUserByEmail(input.email);
+
+    expect(user).toEqual(expectedOutput);
   });
 });
