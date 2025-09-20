@@ -57,4 +57,22 @@ describe("SignUpController", () => {
       password: expect.not.stringMatching(input.password),
     });
   });
+
+  it("should throw if encrypter throws", async () => {
+    const spyEncrypter = vi
+      .spyOn(Encrypter.prototype, "hash")
+      .mockRejectedValue(new Error("Hash error"));
+    const spyUserRepository = vi.spyOn(UserRepository.prototype, "createUser");
+
+    const input = {
+      name: "John Doe",
+      email: "john.doe@example.com",
+      password: "123456789",
+      confirmPassword: "123456789",
+    };
+
+    await expect(SignUpController(input)).rejects.toThrow();
+    expect(spyEncrypter).toHaveBeenCalledOnce();
+    expect(spyUserRepository).not.toHaveBeenCalled();
+  });
 });
