@@ -1,5 +1,6 @@
 import { signUpSchema } from "@/schemas/sign-up.schema";
 import { describe, expect, it } from "vitest";
+import z from "zod";
 
 describe("SignUpSchema", () => {
   const input = {
@@ -13,5 +14,13 @@ describe("SignUpSchema", () => {
     const res = signUpSchema.safeParse(input);
 
     expect(res.success).toBe(true);
+  });
+
+  it("returns false if the email is invalid", () => {
+    const res = signUpSchema.safeParse({ ...input, email: "not-an-email" });
+    expect(res.success).toBe(false);
+    if (!res.success) {
+      expect(z.treeifyError(res.error)).toBeTruthy();
+    }
   });
 });
