@@ -32,8 +32,10 @@ describe("SignInController", () => {
     expect(data.user.name).toBeDefined();
     expect(data.user.createdAt).toBeInstanceOf(Date);
     expect(data.user.updatedAt).toBeInstanceOf(Date);
+    expect(data.user).not.toHaveProperty("password");
 
     expect(data.token).toBeDefined();
+    expect(data.refreshToken).toBeDefined();
 
     expect(spyUserRepository).toHaveBeenCalledOnce();
     expect(spyUserRepository).toHaveBeenCalledWith(SIGN_IN_INPUT.email);
