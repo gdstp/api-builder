@@ -2,7 +2,7 @@ import withInputValidation from "@/middlewares/validation.middleware";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import express from "express";
-import { AppError } from "@/utils/AppError";
+import { AppError } from "@/utils/app-error";
 import { logger } from "@/utils";
 
 function makeRequest(partial: any = {}) {

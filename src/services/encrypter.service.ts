@@ -1,5 +1,5 @@
 import { requireEnv } from "@/utils";
-import { AppError } from "@/utils/AppError";
+import { AppError } from "@/utils/app-error";
 import bcrypt from "bcryptjs";
 
 const SALT_ROUNDS = parseInt(requireEnv("SALT_ROUNDS"), 10);

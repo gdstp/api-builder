@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import Encrypter from "@/services/encrypter.service";
-import { AppError } from "@/utils/AppError";
+import { AppError } from "@/utils/app-error";
 
 vi.mock("@/utils", () => ({
   requireEnv: vi.fn().mockReturnValue("10"),

@@ -1,5 +1,5 @@
 import withErrorHandler from "@/middlewares/error-handler.middleware";
-import { AppError } from "@/utils/AppError";
+import { AppError } from "@/utils/app-error";
 import { beforeEach, describe, expect, it } from "vitest";
 import request from "supertest";
 import express from "express";

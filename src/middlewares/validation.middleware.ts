@@ -1,5 +1,5 @@
 import { logger } from "@/utils";
-import { AppError } from "@/utils/AppError";
+import { AppError } from "@/utils/app-error";
 import { RequestHandler } from "express";
 import z from "zod";
 
