@@ -1,6 +1,7 @@
 import SignInController from "@/controllers/sign-in.controller";
 import UserRepository from "@/repositories/user.repository";
 import Encrypter from "@/services/encrypter.service";
+import TokenService from "@/services/token.service";
 import { AppError } from "@/utils/app-error";
 import {
   SIGN_IN_INPUT,
@@ -16,13 +17,16 @@ describe("SignInController", () => {
     const spyUserRepository = vi
       .spyOn(UserRepository.prototype, "getUserByEmail")
       .mockResolvedValueOnce(USER_REPOSITORY_GET_USER_BY_EMAIL_RETURN);
-    const user = await SignInController(SIGN_IN_INPUT);
+    const spyTokenService = vi.spyOn(TokenService.prototype, "generateToken");
+    const data = await SignInController(SIGN_IN_INPUT);
 
-    expect(user).toHaveProperty("id");
-    expect(user.email).toBe(SIGN_IN_INPUT.email);
-    expect(user.name).toBeDefined();
-    expect(user.createdAt).toBeInstanceOf(Date);
-    expect(user.updatedAt).toBeInstanceOf(Date);
+    expect(data.user).toHaveProperty("id");
+    expect(data.user.email).toBe(SIGN_IN_INPUT.email);
+    expect(data.user.name).toBeDefined();
+    expect(data.user.createdAt).toBeInstanceOf(Date);
+    expect(data.user.updatedAt).toBeInstanceOf(Date);
+
+    expect(data.token).toBeDefined();
 
     expect(spyUserRepository).toHaveBeenCalledOnce();
     expect(spyUserRepository).toHaveBeenCalledWith(SIGN_IN_INPUT.email);
@@ -30,6 +34,10 @@ describe("SignInController", () => {
     expect(spy).toHaveBeenCalledWith(
       SIGN_IN_INPUT.password,
       SIGN_IN_INPUT.password,
+    );
+    expect(spyTokenService).toHaveBeenCalledOnce();
+    expect(spyTokenService).toHaveBeenCalledWith(
+      USER_REPOSITORY_GET_USER_BY_EMAIL_RETURN.id,
     );
   });
 
