@@ -1,7 +1,7 @@
 import SignUpController from "@/controllers/sign-up.controller";
 import UserRepository from "@/repositories/user.repository";
 import Encrypter from "@/services/encrypter.service";
-import { emptyDatabase } from "__tests__/helpers/emptyDatabase";
+import { emptyDatabase } from "__tests__/helpers/empty-database";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 beforeEach(() => {

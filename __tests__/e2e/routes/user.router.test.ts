@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { app } from "@/server";
 import request from "supertest";
-import { emptyDatabase } from "__tests__/helpers/emptyDatabase";
+import { emptyDatabase } from "__tests__/helpers/empty-database";
 import { logger } from "@/utils";
 
 beforeEach(async () => {
