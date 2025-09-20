@@ -63,4 +63,11 @@ describe("SignUpSchema", () => {
       ).toBe(true);
     }
   });
+
+  it("returns false if confirmPassword is missing", () => {
+    const { confirmPassword: _confirmPassword, ...withoutConfirm } = input;
+    const res = signUpSchema.safeParse(withoutConfirm);
+
+    expect(res.success).toBe(false);
+  });
 });
