@@ -24,10 +24,11 @@ export default async function SignInController(input: SignInInput) {
   }
 
   const token = await tokenService.generateAccessToken(user.id);
+  const refreshToken = await tokenService.generateRefreshToken(user.id);
 
-  if (!token) {
+  if (!token || !refreshToken) {
     throw new AppError(
-      "Failed to generate token",
+      "Failed to generate tokens",
       500,
       "FAILED_TO_GENERATE_TOKEN",
     );
@@ -36,5 +37,6 @@ export default async function SignInController(input: SignInInput) {
   return {
     user,
     token,
+    refreshToken,
   };
 }
