@@ -1,18 +1,8 @@
 import SignUpController from "@/controllers/sign-up.controller";
-import { prisma } from "@/lib/prisma";
 import UserRepository from "@/repositories/user.repository";
 import Encrypter from "@/services/encrypter.service";
-import { Prisma } from "@prisma/client";
+import { emptyDatabase } from "__tests__/helpers/emptyDatabase";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
-async function emptyDatabase() {
-  const tables = Prisma.dmmf.datamodel.models.map(
-    (model) => `"${model.dbName || model.name}"`,
-  );
-
-  const sql = `TRUNCATE ${tables.join(", ")} RESTART IDENTITY CASCADE;`;
-  await prisma.$executeRawUnsafe(sql);
-}
 
 beforeEach(() => {
   vi.clearAllMocks();

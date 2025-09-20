@@ -6,7 +6,7 @@ import apiRouter from "./routes";
 
 dotenv.config();
 
-const app = express();
+export const app = express();
 const PORT = requireEnv("API_PORT");
 
 app.use(express.json());
