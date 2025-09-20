@@ -21,6 +21,10 @@ describe("SignInController", () => {
       TokenService.prototype,
       "generateAccessToken",
     );
+    const spyRefreshTokenService = vi.spyOn(
+      TokenService.prototype,
+      "generateRefreshToken",
+    );
     const data = await SignInController(SIGN_IN_INPUT);
 
     expect(data.user).toHaveProperty("id");
@@ -40,6 +44,10 @@ describe("SignInController", () => {
     );
     expect(spyTokenService).toHaveBeenCalledOnce();
     expect(spyTokenService).toHaveBeenCalledWith(
+      USER_REPOSITORY_GET_USER_BY_EMAIL_RETURN.id,
+    );
+    expect(spyRefreshTokenService).toHaveBeenCalledOnce();
+    expect(spyRefreshTokenService).toHaveBeenCalledWith(
       USER_REPOSITORY_GET_USER_BY_EMAIL_RETURN.id,
     );
   });
@@ -80,7 +88,7 @@ describe("SignInController", () => {
     );
   });
 
-  it("should throw AppError if token service returns invalid token", async () => {
+  it("should throw AppError if token service generateAccessToken returns invalid token", async () => {
     const spyUserRepository = vi
       .spyOn(UserRepository.prototype, "getUserByEmail")
       .mockImplementationOnce(() =>
@@ -93,7 +101,38 @@ describe("SignInController", () => {
       .mockResolvedValueOnce("");
 
     await expect(SignInController(SIGN_IN_INPUT)).rejects.toEqual(
-      new AppError("Failed to generate token", 500, "FAILED_TO_GENERATE_TOKEN"),
+      new AppError(
+        "Failed to generate tokens",
+        500,
+        "FAILED_TO_GENERATE_TOKEN",
+      ),
+    );
+    expect(spyUserRepository).toHaveBeenCalledOnce();
+    expect(spyUserRepository).toHaveBeenCalledWith(SIGN_IN_INPUT.email);
+    expect(spyTokenService).toHaveBeenCalledOnce();
+    expect(spyTokenService).toHaveBeenCalledWith(
+      USER_REPOSITORY_GET_USER_BY_EMAIL_RETURN.id,
+    );
+  });
+
+  it("should throw AppError if token service generateRefreshToken returns invalid token", async () => {
+    const spyUserRepository = vi
+      .spyOn(UserRepository.prototype, "getUserByEmail")
+      .mockImplementationOnce(() =>
+        Promise.resolve(USER_REPOSITORY_GET_USER_BY_EMAIL_RETURN),
+      );
+    vi.spyOn(Encrypter.prototype, "compare").mockResolvedValueOnce(true);
+
+    const spyTokenService = vi
+      .spyOn(TokenService.prototype, "generateRefreshToken")
+      .mockResolvedValueOnce("");
+
+    await expect(SignInController(SIGN_IN_INPUT)).rejects.toEqual(
+      new AppError(
+        "Failed to generate tokens",
+        500,
+        "FAILED_TO_GENERATE_TOKEN",
+      ),
     );
     expect(spyUserRepository).toHaveBeenCalledOnce();
     expect(spyUserRepository).toHaveBeenCalledWith(SIGN_IN_INPUT.email);
