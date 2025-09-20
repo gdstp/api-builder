@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { logger } from "@/utils";
 import { AppError } from "@/utils/AppError";
 import { RequestHandler } from "express";
