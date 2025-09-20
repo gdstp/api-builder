@@ -3,7 +3,7 @@ import Encrypter from "@/services/encrypter.service";
 import { AppError } from "@/utils/app-error";
 
 vi.mock("@/utils", () => ({
-  requireEnv: vi.fn().mockReturnValue("10"),
+  requireEnv: vi.fn().mockReturnValue("4"),
 }));
 
 describe("EncrypterService", () => {
