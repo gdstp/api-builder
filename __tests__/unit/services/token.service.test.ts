@@ -32,4 +32,22 @@ describe("TokenService", () => {
       new AppError("User ID is required", 400, "USER_ID_REQUIRED"),
     );
   });
+
+  it("should verify a access token", async () => {
+    const tokenService = new TokenService();
+    const token = await tokenService.generateAccessToken("1");
+
+    const decoded = await tokenService.verifyAccessToken(token);
+
+    expect(decoded).toBeDefined();
+  });
+
+  it("should verify a refresh token", async () => {
+    const tokenService = new TokenService();
+    const token = await tokenService.generateRefreshToken("1");
+
+    const decoded = await tokenService.verifyRefreshToken(token);
+
+    expect(decoded).toBeDefined();
+  });
 });
