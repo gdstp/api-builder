@@ -21,4 +21,12 @@ export default class TokenService {
 
     return jwt.sign({ userId }, REFRESH_JWT_SECRET, { expiresIn: "1d" });
   }
+
+  async verifyAccessToken(token: string) {
+    return jwt.verify(token, JWT_SECRET);
+  }
+
+  async verifyRefreshToken(token: string) {
+    return jwt.verify(token, REFRESH_JWT_SECRET);
+  }
 }
