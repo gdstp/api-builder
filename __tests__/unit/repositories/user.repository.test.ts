@@ -115,4 +115,12 @@ describe("UserRepository", () => {
 
     expect(user).toEqual(expectedOutput);
   });
+
+  it("should return null if the user does not exist", async () => {
+    mockedPrisma.user.findUnique.mockResolvedValue(null);
+
+    const user = await userRepository.getUserById("1");
+
+    expect(user).toBeNull();
+  });
 });
