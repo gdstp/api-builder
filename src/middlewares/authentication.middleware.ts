@@ -13,15 +13,18 @@ export default async function withAuthenticationMiddleware(
   res: Response,
   next: NextFunction,
 ) {
-  const token = req.headers.authorization;
-
-  if (!token) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Unauthorized", code: "UNAUTHORIZED" });
-  }
-
   try {
+    const token = req.headers?.authorization;
+
+    if (!token) {
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+        code: "UNAUTHORIZED",
+      });
+      return;
+    }
+
     const tokenService = new TokenService();
     const decoded = (await tokenService.verifyAccessToken(
       token,
