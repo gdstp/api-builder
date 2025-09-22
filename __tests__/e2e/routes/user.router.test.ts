@@ -140,4 +140,39 @@ describe("UserRouter", () => {
       expect(response.body.error.message).toBe("User not found");
     });
   });
+
+  describe("Profile", () => {
+    let token: string;
+    beforeEach(async () => {
+      logger.level = "info";
+      await request(app).post("/api/v1/user/sign-up").send({
+        name: input.name,
+        email: input.email,
+        password: input.password,
+        confirmPassword: input.confirmPassword,
+      });
+
+      const response = await request(app).post("/api/v1/user/sign-in").send({
+        email: input.email,
+        password: input.password,
+      });
+
+      token = response.body.data.token;
+    });
+
+    it("should return a user", async () => {
+      const response = await request(app)
+        .post("/api/v1/user/profile")
+        .set("Authorization", `Bearer ${token}`)
+        .send();
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("data");
+      expect(response.body.data).toHaveProperty("id");
+      expect(response.body.data).toHaveProperty("name");
+      expect(response.body.data).toHaveProperty("email");
+      expect(response.body.data).not.toHaveProperty("password");
+      expect(response.body.success).toBe(true);
+    });
+  });
 });
