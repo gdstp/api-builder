@@ -1,0 +1,397 @@
+openapi: 3.0.0
+info:
+  title: API Builder
+  version: 1.0.0
+  description: A comprehensive API with authentication and user management
+  contact:
+    name: API Support
+    email: support@apibuilder.com
+  license:
+    name: ISC
+
+servers:
+  - url: http://localhost:3000/api
+    description: Development server
+  - url: https://api.apibuilder.com/api
+    description: Production server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for authentication
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: User unique identifier
+          example: "clm0x1y2z0001abc123def456"
+        name:
+          type: string
+          description: User full name
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          description: User email address
+          example: "john.doe@example.com"
+        createdAt:
+          type: string
+          format: date-time
+          description: User creation timestamp
+          example: "2023-09-22T10:30:00.000Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: User last update timestamp
+          example: "2023-09-22T10:30:00.000Z"
+
+    SignUpRequest:
+      type: object
+      required:
+        - name
+        - email
+        - password
+        - confirmPassword
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: User full name
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          description: User email address
+          example: "john.doe@example.com"
+        password:
+          type: string
+          minLength: 8
+          description: User password (minimum 8 characters)
+          example: "securepassword123"
+        confirmPassword:
+          type: string
+          minLength: 8
+          description: Password confirmation (must match password)
+          example: "securepassword123"
+
+    SignInRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+          example: "john.doe@example.com"
+        password:
+          type: string
+          minLength: 8
+          description: User password
+          example: "securepassword123"
+
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            user:
+              $ref: "#/components/schemas/User"
+            token:
+              type: string
+              description: JWT access token
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            refreshToken:
+              type: string
+              description: JWT refresh token
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+    ProfileResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: "#/components/schemas/User"
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              description: Error message
+              example: "User not found"
+            code:
+              type: string
+              description: Error code
+              example: "USER_NOT_FOUND"
+            statusCode:
+              type: number
+              description: HTTP status code
+              example: 404
+
+tags:
+  - name: Authentication
+    description: User authentication operations
+  - name: User Profile
+    description: User profile management
+
+paths:
+  /v1/user/sign-up:
+    post:
+      summary: Register a new user
+      description: Create a new user account with email and password. Passwords must match and be at least 8 characters long.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpRequest"
+            examples:
+              valid_user:
+                summary: Valid user registration
+                value:
+                  name: "John Doe"
+                  email: "john.doe@example.com"
+                  password: "securepassword123"
+                  confirmPassword: "securepassword123"
+      responses:
+        "201":
+          description: User successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "clm0x1y2z0001abc123def456"
+                      name:
+                        type: string
+                        example: "John Doe"
+                      email:
+                        type: string
+                        example: "john.doe@example.com"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2023-09-22T10:30:00.000Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2023-09-22T10:30:00.000Z"
+        "400":
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                validation_error:
+                  summary: Validation error
+                  value:
+                    success: false
+                    error:
+                      message: "Passwords do not match"
+                      code: "VALIDATION_ERROR"
+                      statusCode: 400
+        "409":
+          description: Conflict - user already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                user_exists:
+                  summary: User already exists
+                  value:
+                    success: false
+                    error:
+                      message: "User already exists"
+                      code: "USER_EXISTS"
+                      statusCode: 409
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /v1/user/sign-in:
+    post:
+      summary: Sign in user
+      description: Authenticate user with email and password to receive JWT tokens
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInRequest"
+            examples:
+              valid_credentials:
+                summary: Valid credentials
+                value:
+                  email: "john.doe@example.com"
+                  password: "securepassword123"
+      responses:
+        "200":
+          description: User successfully authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+              examples:
+                successful_signin:
+                  summary: Successful sign in
+                  value:
+                    success: true
+                    data:
+                      user:
+                        id: "clm0x1y2z0001abc123def456"
+                        name: "John Doe"
+                        email: "john.doe@example.com"
+                        createdAt: "2023-09-22T10:30:00.000Z"
+                        updatedAt: "2023-09-22T10:30:00.000Z"
+                      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                      refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        "400":
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized - invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                invalid_password:
+                  summary: Invalid password
+                  value:
+                    success: false
+                    error:
+                      message: "Invalid password"
+                      code: "INVALID_PASSWORD"
+                      statusCode: 401
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                user_not_found:
+                  summary: User not found
+                  value:
+                    success: false
+                    error:
+                      message: "User not found"
+                      code: "USER_NOT_FOUND"
+                      statusCode: 404
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /v1/user/profile:
+    post:
+      summary: Get user profile
+      description: Retrieve the authenticated user's profile information. Requires valid JWT token.
+      tags:
+        - User Profile
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileResponse"
+              examples:
+                profile_success:
+                  summary: Profile retrieved
+                  value:
+                    success: true
+                    data:
+                      id: "clm0x1y2z0001abc123def456"
+                      name: "John Doe"
+                      email: "john.doe@example.com"
+                      createdAt: "2023-09-22T10:30:00.000Z"
+                      updatedAt: "2023-09-22T10:30:00.000Z"
+        "401":
+          description: Unauthorized - invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                missing_token:
+                  summary: Missing token
+                  value:
+                    success: false
+                    error:
+                      message: "Access token required"
+                      code: "MISSING_TOKEN"
+                      statusCode: 401
+                invalid_token:
+                  summary: Invalid token
+                  value:
+                    success: false
+                    error:
+                      message: "Invalid token"
+                      code: "INVALID_TOKEN"
+                      statusCode: 401
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
