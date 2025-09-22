@@ -20,4 +20,13 @@ describe("ProfileController", () => {
     expect(spyUserRepository).toHaveBeenCalledOnce();
     expect(spyUserRepository).toHaveBeenCalledWith("2");
   });
+
+  it("should throw if user repository throws", async () => {
+    const spyUserRepository = vi.spyOn(UserRepository.prototype, "getUserById");
+    spyUserRepository.mockRejectedValueOnce(new Error("User repository error"));
+
+    await expect(ProfileController({ userId: "2" })).rejects.toThrow();
+    expect(spyUserRepository).toHaveBeenCalledOnce();
+    expect(spyUserRepository).toHaveBeenCalledWith("2");
+  });
 });
