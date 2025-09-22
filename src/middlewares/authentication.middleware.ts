@@ -1,6 +1,7 @@
 import TokenService from "@/services/token.service";
 import { logger } from "@/utils";
 import { NextFunction, Request, Response } from "express";
+import { TokenExpiredError } from "jsonwebtoken";
 
 interface TokenPayload {
   userId: string;
@@ -46,6 +47,17 @@ export default async function withAuthenticationMiddleware(
       endpoint: req.path,
       method: req.method,
     });
+
+    if (error instanceof TokenExpiredError) {
+      res.status(401).json({
+        success: false,
+        error: {
+          message: "Token expired",
+          code: "TOKEN_EXPIRED",
+        },
+      });
+      return;
+    }
 
     res.status(401).json({
       success: false,
