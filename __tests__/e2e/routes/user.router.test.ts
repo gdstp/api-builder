@@ -174,5 +174,14 @@ describe("UserRouter", () => {
       expect(response.body.data).not.toHaveProperty("password");
       expect(response.body.success).toBe(true);
     });
+
+    it("should return a 401 error if the token is invalid", async () => {
+      const response = await request(app)
+        .post("/api/v1/user/profile")
+        .set("Authorization", "Bearer invalid")
+        .send();
+
+      expect(response.status).toBe(401);
+    });
   });
 });
