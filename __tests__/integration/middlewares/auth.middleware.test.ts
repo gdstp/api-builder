@@ -81,6 +81,35 @@ describe("withAuthenticationMiddleware", () => {
     });
   });
 
+  it("should return a 401 error if the something went wrong", async () => {
+    const middleware = withAuthenticationMiddleware;
+    const req = makeRequest({
+      headers: {
+        authorization: "Bearer something went wrong",
+      },
+    });
+    const res = makeResponse() as any;
+    const next = vi.fn();
+
+    vi.spyOn(TokenService.prototype, "verifyAccessToken").mockImplementation(
+      () => {
+        throw new Error("Unexpected error");
+      },
+    );
+
+    middleware(req, res, next);
+
+    expect(next).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      error: {
+        message: "Unauthorized",
+        code: "UNAUTHORIZED",
+      },
+    });
+  });
+
   it("should continue if the token is valid", async () => {
     vi.spyOn(TokenService.prototype, "verifyAccessToken").mockImplementation(
       () => {
