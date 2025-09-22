@@ -1,5 +1,7 @@
 # API Builder
 
+<!-- COVERAGE_PERCENTAGE -->**Test Coverage: 0.0%**<!-- /COVERAGE_PERCENTAGE -->
+
 A comprehensive Node.js API with authentication and user management built with TypeScript, Express, Prisma, and PostgreSQL.
 
 ## Features
