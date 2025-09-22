@@ -10,6 +10,8 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - 5432:5432
+    networks:
+      - api-builder-network
   api-builder:
     container_name: api-builder
     working_dir: /app
@@ -31,5 +33,11 @@ services:
       - /app/node_modules
     depends_on:
       - api-builder-db
+    networks:
+      - api-builder-network
+
+networks:
+  api-builder-network: {}
+
 volumes:
   data:
