@@ -183,5 +183,11 @@ describe("UserRouter", () => {
 
       expect(response.status).toBe(401);
     });
+
+    it("should return a 401 error if the token is not provided", async () => {
+      const response = await request(app).post("/api/v1/user/profile").send();
+
+      expect(response.status).toBe(401);
+    });
   });
 });
