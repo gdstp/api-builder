@@ -15,6 +15,7 @@ describe("ProfileController", () => {
     expect(user).toHaveProperty("id");
     expect(user.email).toBe(USER_REPOSITORY_GET_USER_BY_ID_RETURN.email);
     expect(user.name).toBe(USER_REPOSITORY_GET_USER_BY_ID_RETURN.name);
+    expect(user).not.toHaveProperty("password");
     expect(user.createdAt).toBeInstanceOf(Date);
     expect(user.updatedAt).toBeInstanceOf(Date);
 
