@@ -10,5 +10,7 @@ export default async function ProfileController(input: ProfileInput) {
     throw new AppError("User not found", 404, "USER_NOT_FOUND");
   }
 
-  return user;
+  const { password: _password, ...userInfo } = user;
+
+  return userInfo;
 }
