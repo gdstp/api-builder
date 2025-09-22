@@ -1,5 +1,6 @@
 import ProfileController from "@/controllers/profile.controller";
 import UserRepository from "@/repositories/user.repository";
+import { AppError } from "@/utils/app-error";
 import { USER_REPOSITORY_GET_USER_BY_ID_RETURN } from "__tests__/helpers/test-data";
 import { describe, expect, it, vi } from "vitest";
 
@@ -26,6 +27,18 @@ describe("ProfileController", () => {
     spyUserRepository.mockRejectedValueOnce(new Error("User repository error"));
 
     await expect(ProfileController({ userId: "2" })).rejects.toThrow();
+    expect(spyUserRepository).toHaveBeenCalledOnce();
+    expect(spyUserRepository).toHaveBeenCalledWith("2");
+  });
+
+  it("should throw if user repository returns null", async () => {
+    const spyUserRepository = vi.spyOn(UserRepository.prototype, "getUserById");
+    spyUserRepository.mockResolvedValueOnce(null);
+
+    await expect(ProfileController({ userId: "2" })).rejects.toThrowError(
+      new AppError("User not found", 404, "USER_NOT_FOUND"),
+    );
+
     expect(spyUserRepository).toHaveBeenCalledOnce();
     expect(spyUserRepository).toHaveBeenCalledWith("2");
   });
