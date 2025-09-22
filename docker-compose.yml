@@ -16,11 +16,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    command: npx prisma migrate dev && npm run dev
+    command: npm run dev
     ports:
       - 8000:8000
     environment:
       - NODE_ENV=development
+      - JWT_SECRET=${JWT_SECRET}
+      - REFRESH_JWT_SECRET=${REFRESH_JWT_SECRET}
+      - DATABASE_URL=${DATABASE_URL}
+      - SALT_ROUNDS=${SALT_ROUNDS}
     volumes:
       - .:/app/
       - /app/node_modules

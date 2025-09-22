@@ -13,6 +13,7 @@ Content-Type: application/json
 }
 
 ### Sign in user
+# @name signIn
 POST http://localhost:8000/api/v1/user/sign-in
 Content-Type: application/json
 
@@ -20,3 +21,8 @@ Content-Type: application/json
   "email": "gabriel@example.com",
   "password": "123456789"
 }
+
+### Get profile
+POST http://localhost:8000/api/v1/user/profile
+Content-Type: application/json
+Authorization: Bearer {{signIn.response.body.data.token}}
