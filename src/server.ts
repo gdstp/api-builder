@@ -3,6 +3,7 @@ import express from "express";
 import { requireEnv, logger } from "./utils";
 import middlewares from "./middlewares";
 import apiRouter from "./routes";
+import setupHelmetConfig from "./lib/helmet-config";
 
 dotenv.config();
 
@@ -10,6 +11,8 @@ export const app = express();
 const PORT = requireEnv("API_PORT");
 
 app.use(express.json());
+
+app.use(setupHelmetConfig());
 
 app.use("/api", apiRouter);
 
