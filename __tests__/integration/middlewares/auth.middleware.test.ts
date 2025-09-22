@@ -80,4 +80,25 @@ describe("withAuthenticationMiddleware", () => {
       },
     });
   });
+
+  it("should continue if the token is valid", async () => {
+    vi.spyOn(TokenService.prototype, "verifyAccessToken").mockImplementation(
+      () => {
+        return { userId: "valid user id" };
+      },
+    );
+    const middleware = withAuthenticationMiddleware;
+    const req = {
+      headers: {
+        authorization: "Bearer valid token",
+      },
+    } as any;
+    const res = {} as any;
+    const next = vi.fn();
+
+    middleware(req, res, next);
+
+    expect(req.userId).toBe("valid user id");
+    expect(next).toHaveBeenCalled();
+  });
 });
