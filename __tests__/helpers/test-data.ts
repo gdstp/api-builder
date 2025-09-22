@@ -18,3 +18,12 @@ export const USER_REPOSITORY_GET_USER_BY_EMAIL_RETURN = {
   createdAt: new Date(),
   updatedAt: new Date(),
 };
+
+export const USER_REPOSITORY_GET_USER_BY_ID_RETURN = {
+  id: "2",
+  name: "Foo bar",
+  email: "foo.bar@example.com",
+  password: "123456789",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
