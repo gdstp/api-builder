@@ -37,7 +37,7 @@ describe("TokenService", () => {
     const tokenService = new TokenService();
     const token = await tokenService.generateAccessToken("1");
 
-    const decoded = await tokenService.verifyAccessToken(token);
+    const decoded = tokenService.verifyAccessToken(token);
 
     expect(decoded).toBeDefined();
   });
@@ -46,7 +46,7 @@ describe("TokenService", () => {
     const tokenService = new TokenService();
     const token = await tokenService.generateRefreshToken("1");
 
-    const decoded = await tokenService.verifyRefreshToken(token);
+    const decoded = tokenService.verifyRefreshToken(token);
 
     expect(decoded).toBeDefined();
   });

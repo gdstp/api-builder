@@ -16,19 +16,26 @@ export default async function withAuthenticationMiddleware(
   try {
     const token = req.headers?.authorization;
 
-    if (!token) {
+    if (!token || !token.startsWith("Bearer ")) {
+      logger.warning("Authentication failed: No token provided", {
+        endpoint: req.path,
+        method: req.method,
+        ip: req.ip,
+        userAgent: req.get("User-Agent"),
+      });
+
       res.status(401).json({
         success: false,
-        message: "Unauthorized",
-        code: "UNAUTHORIZED",
+        error: {
+          message: "Missing or invalid token",
+          code: "MISSING_TOKEN",
+        },
       });
       return;
     }
 
     const tokenService = new TokenService();
-    const decoded = (await tokenService.verifyAccessToken(
-      token,
-    )) as TokenPayload;
+    const decoded = tokenService.verifyAccessToken(token) as TokenPayload;
 
     req.user = decoded.userId;
 
@@ -42,8 +49,10 @@ export default async function withAuthenticationMiddleware(
 
     res.status(401).json({
       success: false,
-      message: "Unauthorized",
-      code: "UNAUTHORIZED",
+      error: {
+        message: "Unauthorized",
+        code: "UNAUTHORIZED",
+      },
     });
   }
 }
