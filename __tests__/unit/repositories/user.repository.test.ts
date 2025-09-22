@@ -98,4 +98,21 @@ describe("UserRepository", () => {
 
     expect(user).toBeNull();
   });
+
+  it("should get a user by id", async () => {
+    const expectedOutput = {
+      id: "1",
+      name: input.name,
+      email: input.email,
+      password: input.password,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    mockedPrisma.user.findUnique.mockResolvedValue(expectedOutput);
+
+    const user = await userRepository.getUserById(expectedOutput.id);
+
+    expect(user).toEqual(expectedOutput);
+  });
 });
