@@ -38,7 +38,7 @@ export default async function withAuthenticationMiddleware(
     const tokenService = new TokenService();
     const decoded = tokenService.verifyAccessToken(token) as TokenPayload;
 
-    req.user = decoded.userId;
+    req.userId = decoded.userId;
 
     next();
   } catch (error) {
