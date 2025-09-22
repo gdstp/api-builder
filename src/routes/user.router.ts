@@ -1,3 +1,4 @@
+import ProfileController from "@/controllers/profile.controller";
 import SignInController from "@/controllers/sign-in.controller";
 import SignUpController from "@/controllers/sign-up.controller";
 import middlewares from "@/middlewares";
@@ -22,6 +23,16 @@ router.post(
   middlewares.withInputValidation({ schema: signInSchema, field: "body" }),
   async (req, res) => {
     const data = await SignInController(req.body);
+
+    res.status(200).json({ success: true, data });
+  },
+);
+
+router.post(
+  "/profile",
+  middlewares.withAuthenticationMiddleware,
+  async (req, res) => {
+    const data = await ProfileController({ userId: req.userId });
 
     res.status(200).json({ success: true, data });
   },

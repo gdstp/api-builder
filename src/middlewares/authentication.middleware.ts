@@ -36,7 +36,8 @@ export default async function withAuthenticationMiddleware(
     }
 
     const tokenService = new TokenService();
-    const decoded = tokenService.verifyAccessToken(token) as TokenPayload;
+    const [, jwtToken] = token.split(" ");
+    const decoded = tokenService.verifyAccessToken(jwtToken) as TokenPayload;
 
     req.userId = decoded.userId;
 
