@@ -40,6 +40,7 @@ jobs:
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           REFRESH_JWT_SECRET=${{ secrets.REFRESH_JWT_SECRET }}
           SALT_ROUNDS=${{ secrets.SALT_ROUNDS }}
+          API_PORT=${{ secrets.API_PORT }}
           EOF
 
       - name: Run tests with coverage
