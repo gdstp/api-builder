@@ -8,6 +8,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   test:
@@ -45,3 +47,81 @@ jobs:
 
       - name: Run tests with coverage
         run: npm run test:all:coverage
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+          if-no-files-found: error
+
+  docs:
+    name: Build Swagger UI site
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+
+      - name: Generate coverage badge (npm)
+        run: npx coverage-badges-cli -o site/badges/coverage.svg coverage/lcov.info
+
+      - name: Install swagger-ui-dist
+        run: npm install swagger-ui-dist
+
+      - name: Build Swagger UI site
+        run: |
+          mkdir -p site
+          cp swagger.yml site/
+          cp node_modules/swagger-ui-dist/swagger-ui.css site/
+          cp node_modules/swagger-ui-dist/swagger-ui-bundle.js site/
+          cat > site/index.html <<'EOF'
+          <!doctype html>
+          <html>
+          <head>
+            <meta charset="utf-8"/>
+            <title>API Docs</title>
+            <link rel="stylesheet" href="swagger-ui.css"/>
+          </head>
+          <body>
+            <div id="swagger-ui"></div>
+            <script src="swagger-ui-bundle.js"></script>
+            <script>
+              window.onload = () => {
+                window.ui = SwaggerUIBundle({
+                  url: './swagger.yml',
+                  dom_id: '#swagger-ui'
+                });
+              };
+            </script>
+          </body>
+          </html>
+          EOF
+          # Now include coverage:
+          cp -r coverage/lcov-report site/coverage
+          echo "Coverage copied to site/coverage"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: docs
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

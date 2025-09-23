@@ -1,6 +1,7 @@
 # API Builder
-
-<!-- COVERAGE_PERCENTAGE -->**Test Coverage: 0.0%**<!-- /COVERAGE_PERCENTAGE -->
+[![Swagger](https://img.shields.io/badge/-Swagger-85EA2D?style=flat&logo=swagger&logoColor=white)](https://gdstp.github.io/api-builder/)
+[![Coverage](https://gdstp.github.io/api-builder-ga/badges/coverage.svg)](https://gdstp.github.io/api-builder/coverage)
+[![CI](https://github.com/gdstp/api-builder-ga/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/gdstp/api-builder-ga/actions/workflows/ci.yml)
 
 A comprehensive Node.js API with authentication and user management built with TypeScript, Express, Prisma, and PostgreSQL.
 
