@@ -36,20 +36,6 @@ A comprehensive Node.js API with authentication and user management built with T
 - Docker and Docker Compose
 - npm or yarn
 
-```bash
-# Install dependencies
-npm install
-
-# Start PostgreSQL database
-docker-compose up api-builder-db -d
-
-# Run database migrations
-npx prisma migrate dev
-
-# Generate Prisma client
-npx prisma generate
-
-```
 ## Quick Start
 
 ### 1. Clone the repository
@@ -117,17 +103,9 @@ This will:
 - Start the API server in development mode with hot reload
 - Make the API available at `http://localhost:8000`
 
-### 4. Manual Setup (Alternative)
-
-If you prefer to run without Docker:
-
-# Start development server
-```
-npm run dev
-```
-
 ## API Endpoints
 
+Check [documentation](https://gdstp.github.io/api-builder) for more details. <br/>
 The API is available at `http://localhost:8000/api/v1`
 
 ### Authentication Endpoints
@@ -243,22 +221,6 @@ tests/
 ├── unit/ # Unit tests
 ├── integration/ # Integration tests
 └── e2e/ # End-to-end tests
-```
-
-### Database Management
-
-```bash
-# Create a new migration
-npx prisma migrate dev --name migration_name
-
-# Reset database (development only)
-npx prisma migrate reset
-
-# Deploy migrations to production
-npx prisma migrate deploy
-
-# Generate Prisma client after schema changes
-npx prisma generate
 ```
 
 ## Production Deployment

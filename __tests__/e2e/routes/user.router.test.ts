@@ -144,7 +144,6 @@ describe("UserRouter", () => {
   describe("Profile", () => {
     let token: string;
     beforeEach(async () => {
-      logger.level = "info";
       await request(app).post("/api/v1/user/sign-up").send({
         name: input.name,
         email: input.email,
