@@ -54,7 +54,7 @@ Create a `.env` file in the root directory:
 POSTGRES_USER=apibuilder
 POSTGRES_PASSWORD=password123
 POSTGRES_DB=apibuilder_dev
-DATABASE_URL=postgresql://apibuilder:password123@localhost:5432/apibuilder_dev
+DATABASE_URL=postgresql://apibuilder:password123@api-builder-db:5432/apibuilder_dev
 
 # JWT Configuration
 JWT_SECRET=your-super-secret-jwt-key-here
