@@ -12,6 +12,12 @@ services:
       - 5432:5432
     networks:
       - api-builder-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+
   api-builder:
     container_name: api-builder
     working_dir: /app
