@@ -23,6 +23,6 @@ Content-Type: application/json
 }
 
 ### Get profile
-POST http://localhost:8000/api/v1/user/profile
+GET http://localhost:8000/api/v1/user/profile
 Content-Type: application/json
 Authorization: Bearer {{signIn.response.body.data.token}}

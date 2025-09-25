@@ -161,7 +161,7 @@ describe("UserRouter", () => {
 
     it("should return a user", async () => {
       const response = await request(app)
-        .post("/api/v1/user/profile")
+        .get("/api/v1/user/profile")
         .set("Authorization", `Bearer ${token}`)
         .send();
 
@@ -176,7 +176,7 @@ describe("UserRouter", () => {
 
     it("should return a 401 error if the token is invalid", async () => {
       const response = await request(app)
-        .post("/api/v1/user/profile")
+        .get("/api/v1/user/profile")
         .set("Authorization", "Bearer invalid")
         .send();
 
@@ -184,7 +184,7 @@ describe("UserRouter", () => {
     });
 
     it("should return a 401 error if the token is not provided", async () => {
-      const response = await request(app).post("/api/v1/user/profile").send();
+      const response = await request(app).get("/api/v1/user/profile").send();
 
       expect(response.status).toBe(401);
     });

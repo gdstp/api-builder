@@ -6,15 +6,24 @@ import apiRouter from "./routes";
 import setupHelmetConfig from "./lib/helmet-config";
 import swaggerUi from "swagger-ui-express";
 import { swaggerConfig, swaggerSpec } from "./lib/swagger-config";
+import morganConfig from "./lib/morgan.config";
+import rateLimit from "express-rate-limit";
 
 dotenv.config();
 
 export const app = express();
 const PORT = requireEnv("API_PORT");
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 50,
+});
+
+app.use(limiter);
 app.use(express.json());
 
 app.use(setupHelmetConfig());
+app.use(morganConfig);
 
 app.use(
   "/api-docs",
