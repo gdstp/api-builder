@@ -32,6 +32,7 @@ router.post(
 
 router.post(
   "/refresh-token",
+  middlewares.withAuthenticationMiddleware,
   middlewares.withInputValidation({
     schema: refreshTokenSchema,
     field: "body",
