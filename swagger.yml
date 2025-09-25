@@ -335,7 +335,7 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
 
   /v1/user/profile:
-    post:
+    get:
       summary: Get user profile
       description: Retrieve the authenticated user's profile information. Requires valid JWT token.
       tags:
