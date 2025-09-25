@@ -16,7 +16,7 @@ const PORT = requireEnv("API_PORT");
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: 50,
 });
 
 app.use(limiter);
