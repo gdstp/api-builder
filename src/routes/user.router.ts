@@ -28,7 +28,7 @@ router.post(
   },
 );
 
-router.post(
+router.get(
   "/profile",
   middlewares.withAuthenticationMiddleware,
   async (req, res) => {
