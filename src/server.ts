@@ -6,6 +6,7 @@ import apiRouter from "./routes";
 import setupHelmetConfig from "./lib/helmet-config";
 import swaggerUi from "swagger-ui-express";
 import { swaggerConfig, swaggerSpec } from "./lib/swagger-config";
+import morganConfig from "./lib/morgan.config";
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ const PORT = requireEnv("API_PORT");
 app.use(express.json());
 
 app.use(setupHelmetConfig());
+app.use(morganConfig);
 
 app.use(
   "/api-docs",
