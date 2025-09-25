@@ -26,3 +26,13 @@ Content-Type: application/json
 GET http://localhost:8000/api/v1/user/profile
 Content-Type: application/json
 Authorization: Bearer {{signIn.response.body.data.token}}
+
+### Refresh token
+# @name refreshToken
+POST http://localhost:8000/api/v1/user/refresh-token
+Content-Type: application/json
+Authorization: Bearer {{signIn.response.body.data.token}}
+
+{
+  "refreshToken": "{{signIn.response.body.data.refreshToken}}"
+}

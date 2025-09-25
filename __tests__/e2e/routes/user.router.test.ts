@@ -189,4 +189,92 @@ describe("UserRouter", () => {
       expect(response.status).toBe(401);
     });
   });
+
+  describe("Refresh Token", () => {
+    let refreshToken: string;
+    let accessToken: string;
+    beforeEach(async () => {
+      await request(app).post("/api/v1/user/sign-up").send({
+        name: input.name,
+        email: input.email,
+        password: input.password,
+        confirmPassword: input.confirmPassword,
+      });
+
+      const response = await request(app).post("/api/v1/user/sign-in").send({
+        email: input.email,
+        password: input.password,
+      });
+
+      refreshToken = response.body.data.refreshToken;
+      accessToken = response.body.data.token;
+    });
+
+    it("should refresh a token", async () => {
+      const response = await request(app)
+        .post("/api/v1/user/refresh-token")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
+          refreshToken: refreshToken,
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("data");
+      expect(response.body.data).toHaveProperty("token");
+      expect(response.body.data).toHaveProperty("refreshToken");
+      expect(response.body.data).not.toHaveProperty("password");
+      expect(response.body.success).toBe(true);
+    });
+
+    it("should return a 401 error if the token is invalid", async () => {
+      const response = await request(app)
+        .post("/api/v1/user/refresh-token")
+        .set("Authorization", "Bearer invalid")
+        .send({
+          refreshToken: refreshToken,
+        });
+
+      expect(response.status).toBe(401);
+    });
+
+    it("should return a 401 error if the token is not provided", async () => {
+      const response = await request(app)
+        .post("/api/v1/user/refresh-token")
+        .send({
+          refreshToken: refreshToken,
+        });
+
+      expect(response.status).toBe(401);
+    });
+
+    it("should return a 401 error if the refresh token is invalid", async () => {
+      const response = await request(app)
+        .post("/api/v1/user/refresh-token")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
+          refreshToken: "invalid",
+        });
+
+      expect(response.status).toBe(401);
+    });
+
+    it("should return a 400 error if the refresh token is not provided", async () => {
+      const response = await request(app)
+        .post("/api/v1/user/refresh-token")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send();
+
+      expect(response.status).toBe(400);
+    });
+
+    it("should return a 400 error if the refresh token is empty", async () => {
+      const response = await request(app)
+        .post("/api/v1/user/refresh-token")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
+          refreshToken: "",
+        });
+      expect(response.status).toBe(400);
+    });
+  });
 });
